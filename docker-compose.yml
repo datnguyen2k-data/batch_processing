@@ -1,0 +1,37 @@
+services:
+  spark-master:
+      image: spark-exp-native:3.5.3
+      container_name: spark-master
+      command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+      hostname: spark-master
+      ports:
+        - "8088:8080"
+        - "7077:7077"
+      environment:
+        - SPARK_MASTER_HOST=spark-master
+        - SPARK_NO_DAEMONIZE=true
+      volumes:
+        - ./src:/opt/spark/work-dir/src:ro
+      networks:
+        - kafka-net
+      restart: unless-stopped
+
+  spark-worker:
+    image: spark-exp-native:3.5.3
+    container_name: spark-worker
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=2g
+      - SPARK_NO_DAEMONIZE=true
+    volumes:
+      - ./src:/opt/spark/work-dir/src:ro
+    networks:
+      - kafka-net
+    restart: unless-stopped
+
+networks:
+  kafka-net:
+    external: true

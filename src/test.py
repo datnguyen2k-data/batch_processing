@@ -110,6 +110,9 @@ df_join.printSchema()
 
 df_join_norn = df_join.withColumn("customer", normalize_string_udf("customer"))
 df_join_norn.show() 
+df_join_norn.printSchema()
+
+df_join_norn.writeTo("clickhouse.analytics.orders").append()
 
 # df_join.writeTo("clickhouse.analytics.spark_test").append()
 
@@ -122,3 +125,4 @@ df_join_norn.show()
 
 # # Write DataFrame to ClickHouse
 # df_test.writeTo("clickhouse.default.example_table").append()
+

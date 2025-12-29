@@ -14,6 +14,7 @@ services:
         - SPARK_NO_DAEMONIZE=true
       volumes:
         - ./src:/opt/spark/work-dir/src:ro
+        - ./examples:/opt/spark/work-dir/examples:ro
       networks:
         - kafka-net
       restart: unless-stopped
@@ -32,6 +33,7 @@ services:
       - SPARK_NO_DAEMONIZE=true
     volumes:
       - ./src:/opt/spark/work-dir/src:ro
+      - ./examples:/opt/spark/work-dir/examples:ro
     networks:
       - kafka-net
     restart: unless-stopped

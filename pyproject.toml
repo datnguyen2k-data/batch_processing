@@ -1,9 +1,9 @@
 [project]
 name = "batch-processing"
 version = "0.1.0"
-description = "Add your description here"
+description = "Batch processing with Spark using DDD architecture for data pipelines"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "python-dotenv>=1.2.1",
+    "python-dotenv>=1.2.1"
 ]

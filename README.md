@@ -97,8 +97,11 @@ Docker image đã được build sẵn với tên `spark-exp-native:3.5.3` và b
 
 File `requirements.txt` chứa các dependencies Python cần thiết:
 ```
-python-dotenv>=1.2.1
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
 ```
+
+**Lưu ý:** Dự án sử dụng Pydantic v2 với `pydantic-settings` để quản lý configuration từ file `.env` thay vì `python-dotenv`.
 
 **Thêm Python Dependencies Mới:**
 
@@ -239,7 +242,14 @@ Dự án tuân theo nguyên tắc DDD với các layer:
 
 Các thư viện Python cần thiết (đã có trong `requirements.txt`):
 
-- **python-dotenv** (>=1.2.1): Đọc biến môi trường từ file `.env`
+- **pydantic** (>=2.0.0): Data validation và settings management
+- **pydantic-settings** (>=2.0.0): Đọc biến môi trường từ file `.env` với validation
+
+**Lợi ích của Pydantic v2:**
+- Type validation tự động
+- Đọc và validate config từ `.env` file
+- Hỗ trợ default values và aliases
+- Better error messages khi config sai
 
 **Lưu ý về PySpark:**
 - PySpark đã được tích hợp sẵn trong Spark Docker image

@@ -1,6 +1,7 @@
 # Python dependencies for batch processing
 # Note: pyspark is included in the Spark Docker image, but listed here for local development
 
-# Environment configuration
-python-dotenv>=1.2.1
+# Environment configuration with Pydantic v2
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
 

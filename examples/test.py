@@ -6,9 +6,9 @@ from pyspark.sql.types import (
 )
 from datetime import date, datetime
 from pyspark.sql.functions import udf
-from connector.connector import get_spark_clickhouse
+from src.infrastructure.connectors.spark_connector import SparkConnector
 
-spark = get_spark_clickhouse()
+spark = SparkConnector.create_with_clickhouse(app_name="test", master="local[*]")
 
 def normalize_string(text: str) -> str:
     return text.lower().strip()

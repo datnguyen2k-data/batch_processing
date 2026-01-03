@@ -12,6 +12,7 @@ services:
       environment:
         - SPARK_MASTER_HOST=spark-master
         - SPARK_NO_DAEMONIZE=true
+        - PYTHONPATH=/opt/spark/work-dir
       volumes:
         - ./src:/opt/spark/work-dir/src:ro
         - ./examples:/opt/spark/work-dir/examples:ro
@@ -31,6 +32,7 @@ services:
       - SPARK_WORKER_CORES=2
       - SPARK_WORKER_MEMORY=2g
       - SPARK_NO_DAEMONIZE=true
+      - PYTHONPATH=/opt/spark/work-dir
     volumes:
       - ./src:/opt/spark/work-dir/src:ro
       - ./examples:/opt/spark/work-dir/examples:ro

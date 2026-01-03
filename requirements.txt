@@ -2,6 +2,6 @@
 # Note: pyspark is included in the Spark Docker image, but listed here for local development
 
 # Environment configuration with Pydantic v2
-pydantic>=2.0.0
-pydantic-settings>=2.0.0
+pydantic>=2.8.0
+pydantic-settings>=2.8.0
 

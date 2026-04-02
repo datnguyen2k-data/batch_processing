@@ -149,3 +149,37 @@ class ClickHouseConfig:
     @staticmethod
     def get_database() -> str:
         return _get_clickhouse_settings().database
+
+
+class GovDatabaseSettings(BaseSettings):
+    """Configuration for Control Plane Relational Database (Gov DB)."""
+    
+    host: str = Field(default="localhost", validation_alias="POSTGRES_HOST")
+    port: str = Field(default="5432", validation_alias="POSTGRES_PORT")
+    user: str = Field(default="postgres", validation_alias="POSTGRES_USER")
+    password: str = Field(default="", validation_alias="POSTGRES_PASSWORD")
+    database: str = Field(default="postgres", validation_alias="POSTGRES_DB")
+    
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        extra="ignore"
+    )
+
+_gov_db_settings: Optional[GovDatabaseSettings] = None
+
+def _get_gov_db_settings() -> GovDatabaseSettings:
+    """Get or create GovDatabaseSettings singleton instance."""
+    global _gov_db_settings
+    if _gov_db_settings is None:
+        _gov_db_settings = GovDatabaseSettings()
+    return _gov_db_settings
+
+class GovDbConfig:
+    """Gov DB configuration."""
+    
+    @staticmethod
+    def get_url() -> str:
+        s = _get_gov_db_settings()
+        return f"postgresql+psycopg2://{s.user}:{s.password}@{s.host}:{s.port}/{s.database}"

@@ -1,0 +1,76 @@
+FROM spark:3.5.3-scala2.12-java17-ubuntu
+
+USER root
+
+RUN set -ex; \
+  apt-get update; \
+  apt-get install -y python3 python3-pip curl && \
+  rm -rf /var/lib/apt/lists/*
+
+# Clickhouse Spark Runtime
+RUN curl -fL \
+  https://repo1.maven.org/maven2/com/clickhouse/spark/clickhouse-spark-runtime-3.5_2.12/0.9.0/clickhouse-spark-runtime-3.5_2.12-0.9.0.jar \
+  -o /opt/spark/jars/clickhouse-spark-runtime-3.5_2.12-0.9.0.jar
+
+# Iceberg Spark Runtime
+RUN curl -fL \
+  https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.5_2.12/1.9.2/iceberg-spark-runtime-3.5_2.12-1.9.2.jar \
+  -o /opt/spark/jars/iceberg-spark-runtime-3.5_2.12-1.9.2.jar
+
+# Hadoop AWS + AWS SDK (MinIO)
+RUN curl -fL \
+  https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.4.2/hadoop-aws-3.4.2.jar \
+  -o /opt/spark/jars/hadoop-aws-3.4.2.jar && \
+  curl -fL \
+  https://repo1.maven.org/maven2/software/amazon/awssdk/bundle/2.32.0/bundle-2.32.0.jar \
+  -o /opt/spark/jars/bundle-2.32.0.jar
+
+# Spark Kafka connector (Structured Streaming)
+# RUN curl -fL \
+#   https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.12/3.5.3/spark-sql-kafka-0-10_2.12-3.5.3.jar \
+#   -o /opt/spark/jars/spark-sql-kafka-0-10_2.12-3.5.3.jar && \
+#   curl -fL \
+#   https://repo1.maven.org/maven2/org/apache/kafka/kafka-clients/3.6.1/kafka-clients-3.6.1.jar \
+#   -o /opt/spark/jars/kafka-clients-3.6.1.jar && \
+#   curl -fL \
+#   https://repo1.maven.org/maven2/org/apache/spark/spark-token-provider-kafka-0-10_2.12/3.5.3/spark-token-provider-kafka-0-10_2.12-3.5.3.jar \
+#   -o /opt/spark/jars/spark-token-provider-kafka-0-10_2.12-3.5.3.jar
+
+# Spark Kafka connector
+RUN curl -fL \
+  https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.12/3.5.3/spark-sql-kafka-0-10_2.12-3.5.3.jar \
+  -o /opt/spark/jars/spark-sql-kafka-0-10_2.12-3.5.3.jar && \
+  \
+  curl -fL \
+  https://repo1.maven.org/maven2/org/apache/spark/spark-token-provider-kafka-0-10_2.12/3.5.3/spark-token-provider-kafka-0-10_2.12-3.5.3.jar \
+  -o /opt/spark/jars/spark-token-provider-kafka-0-10_2.12-3.5.3.jar && \
+  \
+  curl -fL \
+  https://repo1.maven.org/maven2/org/apache/kafka/kafka-clients/3.5.1/kafka-clients-3.5.1.jar \
+  -o /opt/spark/jars/kafka-clients-3.5.1.jar && \
+  \
+  curl -fL \
+  https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/2.11.1/commons-pool2-2.11.1.jar \
+  -o /opt/spark/jars/commons-pool2-2.11.1.jar
+
+
+# Install uv from astral
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+
+# Copy dependency definition
+COPY pyproject.toml uv.lock* /opt/spark/work-dir/
+
+WORKDIR /opt/spark/work-dir
+# Blazing-fast installation using uv directly to system python
+RUN uv pip install --system --no-cache -r pyproject.toml
+
+ENV SPARK_HOME=/opt/spark
+ENV PATH=$SPARK_HOME/bin:$PATH
+ENV PYSPARK_PYTHON=python3
+ENV PYSPARK_DRIVER_PYTHON=python3
+
+# Copy App Source for Prod Image (Dev will override with volume)
+COPY ./src /opt/spark/work-dir/src
+COPY ./examples /opt/spark/work-dir/examples
+
+USER spark

@@ -8,7 +8,7 @@ from datetime import date, datetime
 from pyspark.sql.functions import udf
 from src.infrastructure.connectors.spark_connector import SparkConnector
 
-spark = SparkConnector.create_with_clickhouse(app_name="test", master="local[*]")
+spark = SparkConnector.create_with_clickhouse(app_name="test", master="spark://spark-master:7077")
 
 def normalize_string(text: str) -> str:
     return text.lower().strip()
@@ -112,7 +112,7 @@ df_join_norn = df_join.withColumn("customer", normalize_string_udf("customer"))
 df_join_norn.show() 
 df_join_norn.printSchema()
 
-df_join_norn.writeTo("clickhouse.analytics.orders").append()
+df_join_norn.writeTo("clickhouse.clickhouse.orders").append()
 
 # df_join.writeTo("clickhouse.analytics.spark_test").append()
 

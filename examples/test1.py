@@ -4,7 +4,7 @@ from pyspark.sql.types import (StructType, StructField, StringType, IntegerType)
 from datetime import datetime
 from pyspark.sql.functions import udf
 
-spark = SparkSession.builder.app_name("test1").getOrCreate()
+spark = SparkSession.builder.appName("test1").getOrCreate()
 
 def load_config(spark_context: SparkContext):
     spark_context._jsc.sc().hadoopConfiguration().set("fs.s3a.access.key", "clickhouse")

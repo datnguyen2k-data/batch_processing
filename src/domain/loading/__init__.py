@@ -1,11 +1,9 @@
-"""Domain module for different loading strategies."""
-from src.domain.loading.delete_insert import DeleteInsertStrategy
-from src.domain.loading.merge_upsert import MergeUpsertStrategy
-from src.domain.loading.scd_type2 import SCDType2Strategy
+"""Domain module for loading strategies and data port."""
+from src.domain.loading.data_port import ILoadingDataPort
+from src.domain.loading.scd_type2 import ScdType2Evaluator
 
 __all__ = [
-    "DeleteInsertStrategy",
-    "MergeUpsertStrategy",
-    "SCDType2Strategy",
+    "ILoadingDataPort",
+    "ScdType2Evaluator",
 ]
 

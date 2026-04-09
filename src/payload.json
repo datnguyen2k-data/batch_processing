@@ -1,0 +1,55 @@
+    {
+        "pipeline_name": "order_profile_etl",
+        "source": {
+            "type": "clickhouse",
+            "database": "ldz",
+            "table": "orders"
+        },
+        "transform": {
+            "column_mapping": [
+                {
+                    "source": "order_id",
+                    "target": "order_id",
+                    "type": "numbers"
+                },
+                {
+                    "source": "customer_id",
+                    "target": "customer_id",
+                    "type": "numbers"
+                },
+                {
+                    "source": "order_date",
+                    "target": "order_date",
+                    "type": "datetime"
+                },
+                {
+                    "source": "status",
+                    "target": "status",
+                    "type": "string"
+                },
+                {
+                    "source": "total_amount",
+                    "target": "total_amount",
+                    "type": "numbers"
+                },
+                {
+                    "source": "version",
+                    "target": "version",
+                    "type": "numbers"
+                }
+            ]
+        },
+        "target": {
+            "type": "clickhouse",
+            "database": "hmz",
+            "table": "orders",
+            "write_mode": "upsert",
+            "primary_keys": [
+                "order_id"
+            ],
+            "engine": "ReplacingMergeTree",
+            "order_by": [
+                "order_id"
+            ]
+        }
+    }

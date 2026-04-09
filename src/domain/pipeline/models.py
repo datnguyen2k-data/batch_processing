@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 class SourceConfig(BaseModel):
     type: str # e.g., 'clickhouse', 'postgres', 'iceberg'
@@ -11,6 +11,7 @@ class ColumnMapping(BaseModel):
     target: str
     type: str
     expression: Optional[str] = None
+    ast: Optional[Dict[str, Any]] = None
 
 class TransformConfig(BaseModel):
     column_mapping: List[ColumnMapping]
@@ -26,6 +27,8 @@ class TargetConfig(BaseModel):
     partition_by: Optional[List[str]] = None
 
 class PipelineConfig(BaseModel):
+    run_id: Optional[str] = None
+    control_plane_url: Optional[str] = None
     pipeline_name: str
     source: SourceConfig
     transform: TransformConfig
